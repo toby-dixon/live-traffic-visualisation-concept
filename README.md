@@ -1,5 +1,10 @@
 # Live traffic visualizations
 
+## TODO
+- [ ] Traefik config has been pasted in, but not yet configured for these services. 
+
+## Description
+
 The outline of this concept is detailed in the [how to monitor networks](how%20to%20monitor%20networks.drawio.pdf) pdf
 file. This project attempts to put the concept into practice.
 

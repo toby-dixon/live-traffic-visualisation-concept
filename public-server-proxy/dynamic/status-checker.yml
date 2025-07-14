@@ -1,0 +1,13 @@
+http:
+  routers:
+    status-checker-nginx:
+      rule: Host(`status-checker.localhost`)
+      service: status-checker-nginx
+      entryPoints:
+        - web
+
+  services:
+    status-checker-nginx:
+      loadBalancer:
+        servers:
+          - url: "http://status-checker-nginx"
