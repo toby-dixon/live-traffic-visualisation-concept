@@ -1,0 +1,20 @@
+services:
+  communicating-private-service:
+    container_name: communicating-private-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app"]
+    environment:
+      PRIVATE_SERVICE_URL: "https://www.google.com"
+    image: communicating-service:latest
+    ports:
+      - "80:8000"
+    volumes:
+      - ./services/communicating-service:/app
+
+  non-communicating-service:
+    container_name: non-communicating-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app"]
+    image: non-communicating-service:latest
+    ports:
+      - "81:8000"
+    volumes:
+      - ./services/non-communicating-service:/app
