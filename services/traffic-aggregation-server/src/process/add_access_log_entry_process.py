@@ -31,3 +31,7 @@ def add_access_log_entry(docker_client: DockerClient, network_name: str, log: st
 
 def get_access_logs():
     return access_log_data
+
+def clear_access_logs():
+    with mutex:
+        access_log_data.clear()
