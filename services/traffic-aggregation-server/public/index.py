@@ -15,7 +15,7 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-watch_logfile("/var/log/private-server-proxy.log", "private-server-proxy-network")
+watch_logfile("/var/log/access-log.log")
 
 @app.get("/", response_class=HTMLResponse)
 def get_index():
@@ -28,6 +28,8 @@ async def access_logs_websocket(websocket: WebSocket):
   while True:
     data = get_access_logs()
     await websocket.send_text(json.dumps(data))
+    if len(data) > 0:
+        print(data, flush=True)
     clear_access_logs()
     await asyncio.sleep(0.01)
 

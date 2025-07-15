@@ -1,14 +1,18 @@
 http:
   routers:
     private-communicating-service:
-      middlewares: strip-first-segment
+      middlewares:
+        - strip-first-segment
+        - add-network-header
       rule: PathPrefix(`/communicating`)
       service: private-communicating-service
       entryPoints:
         - web
 
     private-non-communicating-service:
-      middlewares: strip-first-segment
+      middlewares:
+        - strip-first-segment
+        - add-network-header
       rule: PathPrefix(`/non-communicating`)
       service: private-non-communicating-service
       entryPoints:

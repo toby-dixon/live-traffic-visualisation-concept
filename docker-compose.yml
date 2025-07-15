@@ -12,7 +12,7 @@ services:
     volumes:
       - ./public-server-proxy:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./access-logs/public-server-proxy.log:/var/log/traefik-access.log
+      - ./access-logs/access-log.log:/var/log/traefik-access.log
 
   private-server-proxy:
     image: traefik:3.4
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./private-server-proxy:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./access-logs/private-server-proxy.log:/var/log/traefik-access.log
+      - ./access-logs/access-log.log:/var/log/traefik-access.log
 
   private-communicating-service:
     container_name: private-communicating-service
@@ -73,7 +73,7 @@ services:
     volumes:
       - ./services/traffic-aggregation-server:/app
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./access-logs/private-server-proxy.log:/var/log/private-server-proxy.log
+      - ./access-logs/access-log.log:/var/log/access-log.log
 
 networks:
   public-server-proxy-network:

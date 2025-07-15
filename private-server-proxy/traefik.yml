@@ -8,7 +8,7 @@ accessLog:
   fields:
     headers:
       names:
-        X-Service-Name: keep
+        X-Network-Name: keep
 
 providers:
   docker:

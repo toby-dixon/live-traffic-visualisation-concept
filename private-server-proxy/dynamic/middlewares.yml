@@ -4,3 +4,8 @@ http:
       stripPrefixRegex:
         regex:
           - "^/[^/]+"
+
+    add-network-header:
+      headers:
+        customRequestHeaders:
+          X-Network-Name: "private-server-proxy-network"

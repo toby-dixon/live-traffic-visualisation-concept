@@ -1,6 +1,8 @@
 http:
   routers:
     public-communicating-service:
+      middlewares:
+        - add-network-header
       rule: Host(`public.localhost`)
       service: public-communicating-service
       entryPoints:

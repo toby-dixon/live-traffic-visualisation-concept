@@ -1,0 +1,6 @@
+http:
+  middlewares:
+    add-network-header:
+      headers:
+        customRequestHeaders:
+          X-Network-Name: "public-server-proxy-network"
