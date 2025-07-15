@@ -25,6 +25,9 @@ It consists of
     - non-communicating service
         - An api service that returns some data. It is essentially the leaf node of this structure.
 
+In order for a network to be considered relevant, its name must be listed
+in [the network_names config](services/traffic-aggregation-server/config/config.py)
+
 ## Live Visualisation
 
 Once this initial structure is set up - the next step would be to build a service that watches the traefik access logs
