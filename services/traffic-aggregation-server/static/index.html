@@ -42,10 +42,28 @@
             stroke-width: 4px !important;
             fill: crimson !important;
         }
+
+        #log-output {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #111;
+            color: #f55;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-top: 2px solid #900;
+        }
 	</style>
 </head>
 <body>
 <svg></svg>
+<div id="log-output"></div>
+
 <script>
     (async () => {
         const svg = d3.select("svg");
@@ -58,7 +76,7 @@
         const links = [];
         const serviceMap = {};
 
-        const LOG_DURATION_MODIFIER = 20
+        const LOG_DURATION_MODIFIER = 20;
 
         Object.entries(networkData).forEach(([networkName, network]) => {
             nodes.push({ id: networkName, type: "network" });
@@ -77,8 +95,6 @@
                 });
             });
         });
-
-        const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
 
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id).distance(150))
@@ -162,7 +178,7 @@
             const involved = [log.from, log.to, log.network];
 
             const highlightClass = log.status < 400 ? "highlight-success" : "highlight-error";
-            const highlightDuration = log.ms * LOG_DURATION_MODIFIER; // minimum 50ms for visibility
+            const highlightDuration = log.ms * LOG_DURATION_MODIFIER;
 
             // Highlight nodes
             node.each(function (d) {
@@ -195,6 +211,16 @@
             const logs = JSON.parse(event.data);
             logs.reverse().forEach(log => {
                 eventQueue.push(log);
+
+                // Log to visual output if status is error
+                if (log.status >= 400) {
+                    const logOutput = document.getElementById("log-output");
+                    const pre = document.createElement("pre");
+                    pre.textContent = JSON.stringify(log, null, 2);
+                    logOutput.appendChild(pre);
+                    logOutput.scrollTop = logOutput.scrollHeight;
+                }
+
                 processNextEvent();
             });
         };

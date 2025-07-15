@@ -28,6 +28,9 @@ It consists of
 In order for a network to be considered relevant, its name must be listed
 in [the network_names config](services/traffic-aggregation-server/config/config.py)
 
+***IMPORTANT*** - `non-communicating-service` is designed to send 400 response codes sometimes in order to illustrate
+what happens on a bad request.
+
 ## Live Visualisation
 
 Once this initial structure is set up - the next step would be to build a service that watches the traefik access logs
@@ -69,6 +72,7 @@ traefik logs we attempt to correlate the node names to the client and request de
     - Visualisation of realtime requests.
     - Duration of requests is accentuated to improve visibility. The value of this modifier is the constant
       `LOG_DURATION_MODIFIER` in [index.html](services/traffic-aggregation-server/static/index.html).
+    - Bad requests are logged as well as highlighted red.
 - public.localhost
     - Publicly accessible service that communicates with private services
 - localhost:82/network_info
