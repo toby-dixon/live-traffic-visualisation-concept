@@ -71,8 +71,8 @@ traefik logs we attempt to correlate the node names to the client and request de
 
 - localhost:82/
     - Visualisation of realtime requests.
-    - Duration of requests is accentuated to improve visibility. The value of this modifier is the constant
-      `LOG_DURATION_MODIFIER` in [index.html](services/traffic-aggregation-server/static/index.html).
+    - To make highlight last longer, modify the `HIGHLIGHT_DURATION` constant
+      in [index.html](services/traffic-aggregation-server/static/index.html).
     - Bad requests are logged as well as highlighted red.
 - public.localhost
     - Publicly accessible service that communicates with private services
