@@ -2,9 +2,9 @@
 
 ## TODO
 
-- [ ] Add visualisations for unknown sources
 - [ ] Improve visualisation
-- [ ] Add more networks/servers
+- [ ] Add documentation for adding a new server
+  - Requires figuring out how to add a new server.
 
 ## Description
 
