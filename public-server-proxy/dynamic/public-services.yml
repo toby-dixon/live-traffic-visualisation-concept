@@ -3,7 +3,7 @@ http:
     public-communicating-service:
       middlewares:
         - add-network-header
-      rule: Host(`public.localhost`)
+      rule: Host(`public.localhost`) || Host(`192.168.1.46`) || Host(`172.20.112.1`)
       service: public-communicating-service
       entryPoints:
         - web
