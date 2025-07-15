@@ -1,7 +1,7 @@
 # Live traffic visualizations
 
 ## TODO
-- [ ] Traefik config has been pasted in, but not yet configured for these services. 
+- [ ] Open websocket to traffic-aggregation-server and visualise logs in realtime
 
 ## Description
 
@@ -56,3 +56,11 @@ traefik logs we attempt to correlate the node names to the client and request de
   the visualisation service has access to both networks, can it match these node names?
 - There should be some handler for the cases where names cannot be matched (some external node representing unrecognised
   traffic into the proxy).
+
+## Endpoints
+- public.localhost
+  - Publicly accessible service that communicates with private services
+- localhost:82/network_info
+  - traffic aggregation server network info endpoint
+- localhost:82/access_logs
+  - Realtime updating access logs, formatting with network name, service from and service to

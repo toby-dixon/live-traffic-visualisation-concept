@@ -12,10 +12,8 @@ def fetch_network_information(docker_client: DockerClient):
     for n in network_information.values():
         network_services = []
         network_containers = docker_client.networks.get(n["id"]).attrs["Containers"]
-        print(network_containers, flush=True)
 
         for container in network_containers.values():
-            print(container, flush=True)
             network_services.append({
                 "name": container["Name"],
                 "ip": container["IPv4Address"].split("/")[0],
