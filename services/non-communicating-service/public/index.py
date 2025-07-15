@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 
 app = FastAPI()
 
@@ -7,6 +7,7 @@ def ping(query_param: str = ""):
   return {"data": "pong", "query_param": query_param}
 
 @app.get("/endpoint")
-def endpoint(query_param: str = ""):
+def endpoint(response: Response, query_param: str = ""):
+  response.status_code = status.HTTP_400_BAD_REQUEST
   return {"data": "pong endpoint", "query_param": query_param}
 

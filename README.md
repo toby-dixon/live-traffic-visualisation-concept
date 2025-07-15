@@ -1,7 +1,9 @@
 # Live traffic visualizations
 
 ## TODO
-- [ ] Open websocket to traffic-aggregation-server and visualise logs in realtime
+
+- [ ] Improve visualisation
+- [ ] Add more networks/servers
 
 ## Description
 
@@ -58,9 +60,14 @@ traefik logs we attempt to correlate the node names to the client and request de
   traffic into the proxy).
 
 ## Endpoints
+
+- localhost:82/
+    - Visualisation of realtime requests.
+    - Duration of requests is accentuated to improve visibility. The value of this modifier is the constant
+      `LOG_DURATION_MODIFIER` in [index.html](services/traffic-aggregation-server/static/index.html).
 - public.localhost
-  - Publicly accessible service that communicates with private services
+    - Publicly accessible service that communicates with private services
 - localhost:82/network_info
-  - traffic aggregation server network info endpoint
-- localhost:82/access_logs
-  - Realtime updating access logs, formatting with network name, service from and service to
+    - traffic aggregation server network info endpoint
+- localhost:82/access_logs (WEBSOCKET)
+    - Realtime updating access logs, formatting with network name, service from and service to

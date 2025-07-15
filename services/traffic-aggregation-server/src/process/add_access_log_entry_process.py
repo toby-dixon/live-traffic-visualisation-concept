@@ -4,15 +4,15 @@ from docker import DockerClient
 from datetime import UTC
 from datetime import datetime
 
-from src.process.fetch_network_information_process import fetch_network_information
+from src.process.fetch_network_information_process import fetch_network_information, get_network_information
 
 mutex = Lock()
 access_log_data = []
 
-def add_access_log_entry(docker_client: DockerClient, network_name: str, log: str):
+def add_access_log_entry(network_name: str, log: str):
     with mutex:
         access_log = json.loads(log)
-        network_info = fetch_network_information(docker_client)
+        network_info = get_network_information()
 
         data = {
             "from": access_log["ClientHost"],
