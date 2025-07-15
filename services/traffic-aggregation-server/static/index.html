@@ -31,24 +31,24 @@
             stroke-width: 2px;
         }
 
-		.edge,
-		.network-node,
-		.service-node {
-			transition: stroke 0.25s ease, stroke-width 0.25s ease, fill 0.25s ease;
-		}
+        .edge,
+        .network-node,
+        .service-node {
+            transition: stroke 0.25s ease, stroke-width 0.25s ease, fill 0.25s ease;
+        }
 
         .highlight-success {
             stroke: limegreen;
             stroke-width: 4px;
             fill: limegreen;
-			transition: none;
+            transition: none;
         }
 
         .highlight-error {
             stroke: crimson;
             stroke-width: 4px;
             fill: crimson;
-			transition: none;
+            transition: none;
         }
 
         #log-output {
@@ -84,7 +84,7 @@
         const links = [];
         const serviceMap = {};
 
-        const LOG_DURATION_MODIFIER = 10;
+        const LOG_DURATION_MODIFIER = 1;
 
         Object.entries(networkData).forEach(([networkName, network]) => {
             nodes.push({ id: networkName, type: "network" });
@@ -175,24 +175,16 @@
         }
 
         const ws = new WebSocket(`ws://${location.host}/access_logs`);
-        const eventQueue = [];
-        let processing = false;
 
-        const processNextEvent = async () => {
-            if (processing || eventQueue.length === 0) return;
-            processing = true;
-
-            const log = eventQueue.shift();
+        function handleLogEvent(log) {
             const involved = [log.from, log.to, log.network];
-
             const highlightClass = log.status < 400 ? "highlight-success" : "highlight-error";
-            const highlightDuration = log.ms * LOG_DURATION_MODIFIER;
+            const highlightDuration = 100;
 
             // Highlight nodes
             node.each(function (d) {
                 if (involved.includes(d.id)) {
-                    d3.select(this)
-						.classed(highlightClass, true);
+                    d3.select(this).classed(highlightClass, true);
                 }
             });
 
@@ -202,25 +194,32 @@
                     involved.includes(l.source.id) &&
                     involved.includes(l.target.id)
                 ) {
-                    d3.select(this)
-						.classed(highlightClass, true);
+                    d3.select(this).classed(highlightClass, true);
                 }
             });
 
-            await new Promise(resolve => setTimeout(resolve, highlightDuration));
-
-            // Clear highlights
-            node.classed(highlightClass, false);
-            link.classed(highlightClass, false);
-
-            processing = false;
-            processNextEvent();
-        };
+            // Remove highlights after delay (non-blocking)
+            setTimeout(() => {
+                node.each(function (d) {
+                    if (involved.includes(d.id)) {
+                        d3.select(this).classed(highlightClass, false);
+                    }
+                });
+                link.each(function (l) {
+                    if (
+                        involved.includes(l.source.id) &&
+                        involved.includes(l.target.id)
+                    ) {
+                        d3.select(this).classed(highlightClass, false);
+                    }
+                });
+            }, highlightDuration);
+        }
 
         ws.onmessage = (event) => {
             const logs = JSON.parse(event.data);
             logs.reverse().forEach(log => {
-                eventQueue.push(log);
+                handleLogEvent(log);
 
                 // Log to visual output if status is error
                 if (log.status >= 400) {
@@ -230,8 +229,6 @@
                     logOutput.appendChild(pre);
                     logOutput.scrollTop = logOutput.scrollHeight;
                 }
-
-                processNextEvent();
             });
         };
     })();

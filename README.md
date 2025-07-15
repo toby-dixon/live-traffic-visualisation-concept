@@ -9,7 +9,8 @@
 ## Description
 
 The outline of this concept is detailed in the [how to monitor networks](how%20to%20monitor%20networks.drawio.pdf) pdf
-file. This project attempts to put the concept into practice.
+file. This project attempts to put the concept into practice. It essentially visualises completed requests in realtime -
+meaning that subsequent requests will be visualised before initial requests, as they are requested and responded first.
 
 It consists of
 
