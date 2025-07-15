@@ -31,7 +31,7 @@ async def access_logs_websocket(websocket: WebSocket):
     if len(data) > 0:
         print(data, flush=True)
     clear_access_logs(data)
-    await asyncio.sleep(0.01)
+    await asyncio.sleep(0.05)
 
 @app.get("/network_info")
 async def ping():

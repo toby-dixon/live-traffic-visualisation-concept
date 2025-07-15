@@ -16,6 +16,6 @@ async def endpoint(response: Response, query_param: str = ""):
   else:
     response.status_code = status.HTTP_200_OK
 
-  time.sleep(random.randint(0,2))
+  time.sleep(random.uniform(0,1))
   return {"data": "pong endpoint", "query_param": query_param}
 

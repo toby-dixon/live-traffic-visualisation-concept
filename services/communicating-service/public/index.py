@@ -11,5 +11,5 @@ app = FastAPI()
 async def ping():
   url = os.getenv("PRIVATE_SERVICE_URL")
   data = requests.get(url)
-  time.sleep(random.randint(0,2))
+  time.sleep(random.uniform(0,1))
   return {"data": data.json()}
