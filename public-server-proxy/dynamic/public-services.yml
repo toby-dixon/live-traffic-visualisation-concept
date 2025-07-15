@@ -1,0 +1,13 @@
+http:
+  routers:
+    public-communicating-service:
+      rule: Host(`public.localhost`)
+      service: public-communicating-service
+      entryPoints:
+        - web
+
+  services:
+    public-communicating-service:
+      loadBalancer:
+        servers:
+          - url: "http://public-communicating-service"

@@ -1,0 +1,6 @@
+http:
+  middlewares:
+    strip-first-segment:
+      stripPrefixRegex:
+        regex:
+          - "^/[^/]+"

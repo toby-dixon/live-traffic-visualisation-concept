@@ -1,0 +1,26 @@
+http:
+  routers:
+    private-communicating-service:
+      middlewares: strip-first-segment
+      rule: PathPrefix(`/communicating`)
+      service: private-communicating-service
+      entryPoints:
+        - web
+
+    private-non-communicating-service:
+      middlewares: strip-first-segment
+      rule: PathPrefix(`/non-communicating`)
+      service: private-non-communicating-service
+      entryPoints:
+        - web
+
+  services:
+    private-communicating-service:
+      loadBalancer:
+        servers:
+          - url: "http://private-communicating-service"
+
+    private-non-communicating-service:
+      loadBalancer:
+        servers:
+          - url: "http://private-non-communicating-service"

@@ -8,4 +8,4 @@ app = FastAPI()
 def ping():
   url = os.getenv("PRIVATE_SERVICE_URL")
   data = requests.get(url)
-  return {"data": data.text}
+  return {"data": data.json()}

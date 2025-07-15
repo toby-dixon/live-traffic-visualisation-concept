@@ -1,0 +1,1 @@
+from .config import network_names
