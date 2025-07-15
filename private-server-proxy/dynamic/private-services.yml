@@ -9,6 +9,15 @@ http:
       entryPoints:
         - web
 
+    private-communicating-service-1:
+      middlewares:
+        - strip-first-segment
+        - add-network-header
+      rule: PathPrefix(`/communicating-1`)
+      service: private-communicating-service-1
+      entryPoints:
+        - web
+
     private-non-communicating-service:
       middlewares:
         - strip-first-segment
@@ -23,6 +32,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://private-communicating-service"
+
+    private-communicating-service-1:
+      loadBalancer:
+        servers:
+          - url: "http://private-communicating-service-1"
 
     private-non-communicating-service:
       loadBalancer:

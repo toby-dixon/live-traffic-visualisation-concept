@@ -80,3 +80,25 @@ traefik logs we attempt to correlate the node names to the client and request de
     - traffic aggregation server network info endpoint
 - localhost:82/access_logs (WEBSOCKET)
     - Realtime updating access logs, formatting with network name, service from and service to
+
+## Adding a new service
+
+In the docker compose:
+
+1. Add a new service
+
+- Make sure that it is on whichever network it should be accessible through
+- e.g. if it should be accessible from outside the server, put it on the public-server-proxy-network
+- e.g. if it should only be accessible from within the server by other services, put it on the
+  private-server-proxy-network
+
+2. Add the service to the config in its corresponding proxy's `dynamic/` directory
+
+- e.g. for public - [public-server-proxy/dynamic/public-services.yml](public-server-proxy/dynamic/public-services.yml)
+- e.g. for
+  private - [private-server-proxy/dynamic/private-services.yml](private-server-proxy/dynamic/private-services.yml)
+- In order to add the service, add a new router and service in the yaml.
+    - The service can be copied from another, all that needs changing is the load balancer URL which should just point to
+      the service's container, make sure to specify which port.
+    - The router can be copied, but the routing rules must be modified (only path prefix for private. Make sure to also
+      add the strip prefix middleware) as well as the service it points to  (which should be the one just created).
