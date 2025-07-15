@@ -84,7 +84,7 @@
         const links = [];
         const serviceMap = {};
 
-        const LOG_DURATION_MODIFIER = 20;
+        const HIGHLIGHT_DURATION = 50;
 
         Object.entries(networkData).forEach(([networkName, network]) => {
             nodes.push({ id: networkName, type: "network" });
@@ -186,7 +186,7 @@
             const involved = [log.from, log.to, log.network];
 
             const highlightClass = log.status < 400 ? "highlight-success" : "highlight-error";
-            const highlightDuration = 100;
+            const highlightDuration = HIGHLIGHT_DURATION;
 
             // Highlight nodes
             node.each(function (d) {
