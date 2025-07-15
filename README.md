@@ -5,6 +5,12 @@
 - [ ] Improve visualisation
 - [ ] Add documentation for adding a new server
   - Requires figuring out how to add a new server.
+- [ ] Split into different docker compose files?
+  - Docker compose for a server's public and private proxies.
+  - Docker compose for a collection of services on a particular server
+  - Docker compose for the traffic aggregator
+  - In practice I should just be able to deploy these compose files on different servers, maybe test with rpi?
+  - For development I will need another solution.
 
 ## Description
 
