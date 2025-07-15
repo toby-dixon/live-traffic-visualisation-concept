@@ -30,7 +30,7 @@ async def access_logs_websocket(websocket: WebSocket):
     await websocket.send_text(json.dumps(data))
     if len(data) > 0:
         print(data, flush=True)
-    clear_access_logs()
+    clear_access_logs(data)
     await asyncio.sleep(0.01)
 
 @app.get("/network_info")

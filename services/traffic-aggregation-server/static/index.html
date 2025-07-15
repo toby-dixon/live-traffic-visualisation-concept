@@ -31,16 +31,24 @@
             stroke-width: 2px;
         }
 
+		.edge,
+		.network-node,
+		.service-node {
+			transition: stroke 0.25s ease, stroke-width 0.25s ease, fill 0.25s ease;
+		}
+
         .highlight-success {
-            stroke: limegreen !important;
-            stroke-width: 4px !important;
-            fill: limegreen !important;
+            stroke: limegreen;
+            stroke-width: 4px;
+            fill: limegreen;
+			transition: none;
         }
 
         .highlight-error {
-            stroke: crimson !important;
-            stroke-width: 4px !important;
-            fill: crimson !important;
+            stroke: crimson;
+            stroke-width: 4px;
+            fill: crimson;
+			transition: none;
         }
 
         #log-output {
@@ -76,7 +84,7 @@
         const links = [];
         const serviceMap = {};
 
-        const LOG_DURATION_MODIFIER = 20;
+        const LOG_DURATION_MODIFIER = 10;
 
         Object.entries(networkData).forEach(([networkName, network]) => {
             nodes.push({ id: networkName, type: "network" });
@@ -183,7 +191,8 @@
             // Highlight nodes
             node.each(function (d) {
                 if (involved.includes(d.id)) {
-                    d3.select(this).classed(highlightClass, true);
+                    d3.select(this)
+						.classed(highlightClass, true);
                 }
             });
 
@@ -193,7 +202,8 @@
                     involved.includes(l.source.id) &&
                     involved.includes(l.target.id)
                 ) {
-                    d3.select(this).classed(highlightClass, true);
+                    d3.select(this)
+						.classed(highlightClass, true);
                 }
             });
 

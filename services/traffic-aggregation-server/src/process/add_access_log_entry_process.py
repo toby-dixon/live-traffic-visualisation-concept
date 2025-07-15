@@ -32,6 +32,8 @@ def add_access_log_entry(log: str):
 def get_access_logs():
     return access_log_data
 
-def clear_access_logs():
+def clear_access_logs(logs_to_remove: dict):
     with mutex:
-        access_log_data.clear()
+        for item in logs_to_remove:
+            if item in access_log_data:
+                access_log_data.remove(item)
