@@ -95,6 +95,8 @@ traefik logs we attempt to correlate the node names to the client and request de
     - traffic aggregation server network info endpoint
 - localhost:82/access_logs (WEBSOCKET)
     - Realtime updating access logs, formatting with network name, service from and service to
+- localhost:85
+  - New server entrypoint, for seeing activity on another public server
 
 ## Adding a new service
 
