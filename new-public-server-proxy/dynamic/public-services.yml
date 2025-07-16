@@ -1,0 +1,15 @@
+http:
+  routers:
+    public-non-communicating-service:
+      middlewares:
+        - add-network-header
+      rule: PathPrefix(`/`)
+      service: public-non-communicating-service
+      entryPoints:
+        - web
+
+  services:
+    public-non-communicating-service:
+      loadBalancer:
+        servers:
+          - url: "http://public-non-communicating-service"

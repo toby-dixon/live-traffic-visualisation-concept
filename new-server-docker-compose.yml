@@ -1,0 +1,29 @@
+services:
+  new-public-server-proxy:
+    image: traefik:3.4
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    container_name: new-public-server-proxy
+    networks:
+      - new-public-server-proxy-network
+    ports:
+      - "85:80"
+      - "8085:8080"
+    volumes:
+      - ./new-public-server-proxy:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./access-logs/access-log.log:/var/log/traefik-access.log
+
+  public-non-communicating-service:
+    container_name: public-non-communicating-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    image: non-communicating-service:latest
+    networks:
+      - new-public-server-proxy-network
+    volumes:
+      - ./services/non-communicating-service:/app
+
+networks:
+  new-public-server-proxy-network:
+    name: new-public-server-proxy-network
+    external: true

@@ -16,6 +16,7 @@
             width: 100vw;
             height: 100vh;
             background: #ffffff;
+            cursor: grab;
         }
 
         .network-node {
@@ -82,6 +83,19 @@
         const svg = d3.select("svg");
         const width = window.innerWidth;
         const height = window.innerHeight;
+
+        // Zoom group
+        const zoomLayer = svg.append("g");
+
+        // Apply zoom behavior
+        svg.call(
+            d3.zoom()
+                .scaleExtent([0.1, 10])
+                .on("zoom", (event) => {
+                    zoomLayer.attr("transform", event.transform);
+                })
+        );
+
         const networkData = await fetch("/network_info").then((res) => res.json());
 
         const nodes = [];
@@ -91,7 +105,6 @@
 
         const HIGHLIGHT_DURATION = 150;
 
-        // Initialize nodes and links from networkData
         Object.entries(networkData).forEach(([networkName, network]) => {
             nodes.push({ id: networkName, type: "network" });
             nodeIdSet.add(networkName);
@@ -112,23 +125,17 @@
             });
         });
 
-        // Helper to get external node ID for a network
         function externalNodeId(networkName) {
             return `external:${networkName}`;
         }
 
-        // Setup simulation
         let simulation = d3
             .forceSimulation(nodes)
-            .force(
-                "link",
-                d3.forceLink(links).id((d) => d.id).distance(150)
-            )
+            .force("link", d3.forceLink(links).id((d) => d.id).distance(150))
             .force("charge", d3.forceManyBody().strength(-1000))
             .force("center", d3.forceCenter(width / 2, height / 2));
 
-        // Create initial link, node, label selections
-        let link = svg
+        let link = zoomLayer
             .append("g")
             .attr("stroke", "#aaa")
             .selectAll("line")
@@ -136,7 +143,7 @@
             .join("line")
             .attr("class", "edge");
 
-        let node = svg
+        let node = zoomLayer
             .append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 1.5)
@@ -151,7 +158,7 @@
             })
             .call(drag(simulation));
 
-        let label = svg
+        let label = zoomLayer
             .append("g")
             .selectAll("text")
             .data(nodes)
@@ -173,24 +180,22 @@
         });
 
         function drag(simulation) {
-            function dragstarted(event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
-
-            function dragged(event, d) {
-                d.fx = event.x;
-                d.fy = event.y;
-            }
-
-            function dragended(event, d) {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-            }
-
-            return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
+            return d3
+                .drag()
+                .on("start", (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                })
+                .on("drag", (event, d) => {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                })
+                .on("end", (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                });
         }
 
         const ws = new WebSocket(`ws://${location.host}/access_logs`);
@@ -203,7 +208,6 @@
 
             const log = eventQueue.shift();
             const involved = [log.from, log.to, log.network];
-
             const highlightClass = log.status < 400 ? "highlight-success" : "highlight-error";
 
             node.each(function (d) {
@@ -232,19 +236,13 @@
             const logOutput = document.getElementById("log-output");
 
             logs.forEach((log) => {
-                // Check if 'from' is known
                 if (!nodeIdSet.has(log.from)) {
-                    // Instead of adding a new node per unknown 'from',
-                    // add or reuse a single external node per network
-
                     const extId = externalNodeId(log.network);
 
                     if (!nodeIdSet.has(extId)) {
-                        // Add external node for this network
                         nodes.push({ id: extId, type: "external" });
                         nodeIdSet.add(extId);
 
-                        // Link external node to network node
                         links.push({
                             source: extId,
                             target: log.network,
@@ -254,10 +252,8 @@
                         simulation.nodes(nodes);
                         simulation.force("link").links(links);
 
-                        // Incrementally update links
                         link = link.data(links).join("line").attr("class", "edge");
 
-                        // Incrementally update nodes
                         node = node.data(nodes).join(
                             (enter) =>
                                 enter
@@ -273,7 +269,6 @@
                             (exit) => exit.remove()
                         );
 
-                        // Incrementally update labels
                         label = label.data(nodes).join(
                             (enter) =>
                                 enter
@@ -288,11 +283,9 @@
                         simulation.alpha(1).restart();
                     }
 
-                    // Map unknown 'from' to this external node
                     log.from = extId;
                 }
 
-                // Show error logs in log output
                 if (log.status >= 400) {
                     const pre = document.createElement("div");
                     pre.textContent = JSON.stringify(log, null, 2);

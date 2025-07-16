@@ -1,0 +1,22 @@
+entryPoints:
+  web:
+    address: ":80"
+
+accessLog:
+  filePath: "/var/log/traefik-access.log"
+  format: "json"
+  fields:
+    headers:
+      names:
+        X-Network-Name: keep
+
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+api:
+  dashboard: true
+  insecure: true  # Only for dev—disable in prod

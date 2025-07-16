@@ -116,3 +116,27 @@ In the docker compose:
       the service's container, make sure to specify which port.
     - The router can be copied, but the routing rules must be modified (only path prefix for private. Make sure to also
       add the strip prefix middleware) as well as the service it points to  (which should be the one just created).
+
+## Adding a new server
+1. Either in the existing docker compose, or a new one, add the new proxy and its corresponding network
+    - A public network should expose ports, a private shouldn't.
+      - If using a new docker compose, the network will have to be created as external
+      - you can then create it by running `docker network create {{ your-network-name-here }}`
+    - A new docker compose with a new public proxy can be seen in [new-server-docker-compose.yml](new-server-docker-compose.yml)
+2. Duplicate (create a new) proxy config folder such as `public-server-proxy` or `private-server-proxy`
+3. Modify the `dynamic/middlewares.yml` file in this new proxy config folder - changing the `add-network-header` middleware so that 
+    - See [new-public-server-proxy](new-public-server-proxy) for an example
+4. Make sure the `dynamic/{public/private}-services.yml` file is empty (as no services yet exist)
+5. Add the new server name to the [traefik-aggregation-server config](services/traffic-aggregation-server/config/config.py). as well as to the networks section of [the main docker-compose.yml](docker-compose.yml)
+6. Run the following commands in order:
+    - If running a new docker compose file:
+        ```bash
+        docker compose -f {{ your-new-docker-compose-file }} up -d
+        docker compose down 
+        docker compose up
+        ```
+    - If all in the same original docker compose:
+        ```bash
+        docker compose down
+        docker compose up
+        ```

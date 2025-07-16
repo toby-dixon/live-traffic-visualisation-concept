@@ -80,6 +80,7 @@ services:
     networks:
       - public-server-proxy-network
       - private-server-proxy-network
+      - new-public-server-proxy-network
     ports:
       - "82:80"
     volumes:
@@ -95,3 +96,7 @@ networks:
   private-server-proxy-network:
     name: private-server-proxy-network
     driver: bridge
+
+  new-public-server-proxy-network:
+    name: new-public-server-proxy-network
+    external: true
