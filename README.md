@@ -2,9 +2,17 @@
 
 ## TODO
 
-- [ ] Improve visualisation
 - [ ] Add documentation for adding a new server
   - Requires figuring out how to add a new server.
+- [ ] Add ability to replay events
+  - Will need to store access logs somewhere, and have some GUI navigation element
+  - Maybe allow modification of speed of replay as well - Should only really have to reserve main view page, just with stored logs rather than live logs.
+    - Can I just pass them an array of all logs I want to replay, and just have them replay in order?
+- [ ] Structure frontend
+  - Not some monolithic HTML file
+  - Separate logic - will make configuration easier as well (perhaps a config.js file that defines constants)
+  - Perhaps serve as a different container than server?
+    - Isolated NODE Dockerfile
 - [ ] Split into different docker compose files?
   - Docker compose for a server's public and private proxies.
   - Docker compose for a collection of services on a particular server
