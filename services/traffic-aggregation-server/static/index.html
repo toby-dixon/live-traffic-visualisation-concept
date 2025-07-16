@@ -82,7 +82,6 @@
         const svg = d3.select("svg");
         const width = window.innerWidth;
         const height = window.innerHeight;
-
         const networkData = await fetch("/network_info").then((res) => res.json());
 
         const nodes = [];
