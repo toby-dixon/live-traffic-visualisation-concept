@@ -3,22 +3,23 @@
 ## TODO
 
 - [ ] Add documentation for adding a new server
-  - Requires figuring out how to add a new server.
+    - Requires figuring out how to add a new server.
 - [ ] Add ability to replay events
-  - Will need to store access logs somewhere, and have some GUI navigation element
-  - Maybe allow modification of speed of replay as well - Should only really have to reserve main view page, just with stored logs rather than live logs.
-    - Can I just pass them an array of all logs I want to replay, and just have them replay in order?
+    - Will need to store access logs somewhere, and have some GUI navigation element
+    - Maybe allow modification of speed of replay as well - Should only really have to reserve main view page, just with
+      stored logs rather than live logs.
+        - Can I just pass them an array of all logs I want to replay, and just have them replay in order?
 - [ ] Structure frontend
-  - Not some monolithic HTML file
-  - Separate logic - will make configuration easier as well (perhaps a config.js file that defines constants)
-  - Perhaps serve as a different container than server?
-    - Isolated NODE Dockerfile
+    - Not some monolithic HTML file
+    - Separate logic - will make configuration easier as well (perhaps a config.js file that defines constants)
+    - Perhaps serve as a different container than server?
+        - Isolated NODE Dockerfile
 - [ ] Split into different docker compose files?
-  - Docker compose for a server's public and private proxies.
-  - Docker compose for a collection of services on a particular server
-  - Docker compose for the traffic aggregator
-  - In practice I should just be able to deploy these compose files on different servers, maybe test with rpi?
-  - For development I will need another solution.
+    - Docker compose for a server's public and private proxies.
+    - Docker compose for a collection of services on a particular server
+    - Docker compose for the traffic aggregator
+    - In practice I should just be able to deploy these compose files on different servers, maybe test with rpi?
+    - For development I will need another solution.
 
 ## Description
 
@@ -112,22 +113,28 @@ In the docker compose:
 - e.g. for
   private - [private-server-proxy/dynamic/private-services.yml](private-server-proxy/dynamic/private-services.yml)
 - In order to add the service, add a new router and service in the yaml.
-    - The service can be copied from another, all that needs changing is the load balancer URL which should just point to
+    - The service can be copied from another, all that needs changing is the load balancer URL which should just point
+      to
       the service's container, make sure to specify which port.
     - The router can be copied, but the routing rules must be modified (only path prefix for private. Make sure to also
       add the strip prefix middleware) as well as the service it points to  (which should be the one just created).
 
 ## Adding a new server
+
 1. Either in the existing docker compose, or a new one, add the new proxy and its corresponding network
     - A public network should expose ports, a private shouldn't.
-      - If using a new docker compose, the network will have to be created as external
-      - you can then create it by running `docker network create {{ your-network-name-here }}`
-    - A new docker compose with a new public proxy can be seen in [new-server-docker-compose.yml](new-server-docker-compose.yml)
+        - If using a new docker compose, the network will have to be created as external
+        - you can then create it by running `docker network create {{ your-network-name-here }}`
+    - A new docker compose with a new public proxy can be seen
+      in [new-server-docker-compose.yml](new-server-docker-compose.yml)
 2. Duplicate (create a new) proxy config folder such as `public-server-proxy` or `private-server-proxy`
-3. Modify the `dynamic/middlewares.yml` file in this new proxy config folder - changing the `add-network-header` middleware so that 
+3. Modify the `dynamic/middlewares.yml` file in this new proxy config folder - changing the `add-network-header`
+   middleware so that
     - See [new-public-server-proxy](new-public-server-proxy) for an example
 4. Make sure the `dynamic/{public/private}-services.yml` file is empty (as no services yet exist)
-5. Add the new server name to the [traefik-aggregation-server config](services/traffic-aggregation-server/config/config.py). as well as to the networks section of [the main docker-compose.yml](docker-compose.yml)
+5. Add the new server name to
+   the [traefik-aggregation-server config](services/traffic-aggregation-server/config/config.py). as well as to the
+   networks section of [the main docker-compose.yml](docker-compose.yml)
 6. Run the following commands in order:
     - If running a new docker compose file:
         ```bash
@@ -140,3 +147,6 @@ In the docker compose:
         docker compose down
         docker compose up
         ```
+
+Now when viewing the visualisation, you should see another new server present, connected to the
+traffic-aggregation-server node. You can now add services to this new proxy and be able to see any traffic activity.
