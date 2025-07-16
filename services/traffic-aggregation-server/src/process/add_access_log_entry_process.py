@@ -20,7 +20,8 @@ def add_access_log_entry(log: str):
             "status": access_log["DownstreamStatus"],
             "ms": access_log["Duration"] / 1e6,
             "network": network_name,
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(UTC).isoformat(),
+            "path": access_log["RequestPath"]
         }
 
         for i in network_info[network_name]["services"]:
