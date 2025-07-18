@@ -1,4 +1,43 @@
 # Live traffic visualizations
+View communications between microservices in realtime.
+
+The goal is to have this configured in a way where creating a new proxy is involved, but done once per server (see
+[[docker-compose/default-services-docker-compose.yml]] and its corresponding proxy configs
+in [[proxies/private-server-proxy]]
+and [[proxies/public-server-proxy]]).
+
+Then, any future services using on that server can just use those proxies to communicate, rather than directly between
+containers. This does require some setup - i.e. any services will need to be added to dynamic config of
+private-server-proxy, and any public facing services will need to have the same done in the public-server-proxy. But,
+this gives us much better observability between the containers on our servers - and potentially the entire network.
+
+## Usage
+
+1. Create the docker networks. There are 3 different proxies, therefore we require 3 different networks:
+    ```bash
+    docker network create public-server-proxy-network
+    docker network create private-server-proxy-network
+    docker network create new-public-server-proxy-network
+    ```
+2. Start the default proxies. Since all traffic between services goes through the proxies, they must exist before the
+   containers that use them
+    ```bash
+    docker compose -f docker-compose/default-proxies-docker-compose.yml up -d
+    ```
+3. Start the default services:
+    ```bash
+    docker compose -f docker-compose/default-services-docker-compose.yml up -d
+    ```
+4. Start the "new-server" service and its server:
+    ```bash
+    docker compose -f docker-compose/new-server-docker-compose.yml up -d
+    ```
+5. Finally, start the TAS (traffic aggregation server) docker-compose:
+    ```bash
+    docker compose -f docker-compose/tas-docker-compose.yml up -d
+    ```
+
+Visit the [endpoints](#endpoints)
 
 ## TODO
 
@@ -96,7 +135,7 @@ traefik logs we attempt to correlate the node names to the client and request de
 - localhost:82/access_logs (WEBSOCKET)
     - Realtime updating access logs, formatting with network name, service from and service to
 - localhost:85
-  - New server entrypoint, for seeing activity on another public server
+    - New server entrypoint, for seeing activity on another public server
 
 ## Adding a new service
 
@@ -111,9 +150,10 @@ In the docker compose:
 
 2. Add the service to the config in its corresponding proxy's `dynamic/` directory
 
-- e.g. for public - [public-server-proxy/dynamic/public-services.yml](public-server-proxy/dynamic/public-services.yml)
 - e.g. for
-  private - [private-server-proxy/dynamic/private-services.yml](private-server-proxy/dynamic/private-services.yml)
+  public - [proxies/public-server-proxy/dynamic/public-services.yml](proxies/public-server-proxy/dynamic/public-services.yml)
+- e.g. for
+  private - [proxies/private-server-proxy/dynamic/private-services.yml](proxies/private-server-proxy/dynamic/private-services.yml)
 - In order to add the service, add a new router and service in the yaml.
     - The service can be copied from another, all that needs changing is the load balancer URL which should just point
       to
@@ -128,15 +168,16 @@ In the docker compose:
         - If using a new docker compose, the network will have to be created as external
         - you can then create it by running `docker network create {{ your-network-name-here }}`
     - A new docker compose with a new public proxy can be seen
-      in [new-server-docker-compose.yml](new-server-docker-compose.yml)
-2. Duplicate (create a new) proxy config folder such as `public-server-proxy` or `private-server-proxy`
+      in [new-server-docker-compose.yml](docker-compose/new-server-docker-compose.yml)
+2. Duplicate (create a new) proxy config folder such as `proxies/public-server-proxy` or `proxies/private-server-proxy`
 3. Modify the `dynamic/middlewares.yml` file in this new proxy config folder - changing the `add-network-header`
    middleware so that
-    - See [new-public-server-proxy](new-public-server-proxy) for an example
+    - See [new-public-server-proxy](proxies/new-public-server-proxy) for an example
 4. Make sure the `dynamic/{public/private}-services.yml` file is empty (as no services yet exist)
 5. Add the new server name to
    the [traefik-aggregation-server config](services/traffic-aggregation-server/config/config.py). as well as to the
-   networks section of [the main docker-compose.yml](docker-compose.yml)
+   networks section of [the traefik aggreagtion servers docker compose](docker-compose/tas-docker-compose.yml) - as well
+   as any other docker compose with services that use it.
 6. Run the following commands in order:
     - If running a new docker compose file:
         ```bash

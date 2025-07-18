@@ -10,9 +10,9 @@ services:
       - "85:80"
       - "8085:8080"
     volumes:
-      - ./new-public-server-proxy:/etc/traefik
+      - ../proxies/new-public-server-proxy:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./access-logs/access-log.log:/var/log/traefik-access.log
+      - ../access-logs/access-log.log:/var/log/traefik-access.log
 
   public-non-communicating-service:
     container_name: public-non-communicating-service
@@ -21,7 +21,7 @@ services:
     networks:
       - new-public-server-proxy-network
     volumes:
-      - ./services/non-communicating-service:/app
+      - ../services/non-communicating-service:/app
 
 networks:
   new-public-server-proxy-network:

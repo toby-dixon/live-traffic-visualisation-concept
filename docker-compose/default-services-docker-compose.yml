@@ -1,0 +1,52 @@
+services:
+  private-communicating-service:
+    container_name: private-communicating-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    environment:
+      PRIVATE_SERVICE_URL: "http://private-server-proxy/communicating-1"
+    image: communicating-service:latest
+    networks:
+      - private-server-proxy-network
+    volumes:
+      - ../services/communicating-service:/app
+
+  private-communicating-service-1:
+    container_name: private-communicating-service-1
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    environment:
+      PRIVATE_SERVICE_URL: "http://private-server-proxy/non-communicating/endpoint?query_param=123"
+    image: communicating-service:latest
+    networks:
+      - private-server-proxy-network
+    volumes:
+      - ../services/communicating-service:/app
+
+  private-non-communicating-service:
+    container_name: private-non-communicating-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    image: non-communicating-service:latest
+    networks:
+      - private-server-proxy-network
+    volumes:
+      - ../services/non-communicating-service:/app
+
+  public-communicating-service:
+    container_name: public-communicating-service
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    environment:
+      PRIVATE_SERVICE_URL: "http://private-server-proxy/communicating"
+    image: communicating-service:latest
+    networks:
+      - public-server-proxy-network
+      - private-server-proxy-network
+    volumes:
+      - ../services/communicating-service:/app
+
+networks:
+  public-server-proxy-network:
+    name: public-server-proxy-network
+    external: true
+
+  private-server-proxy-network:
+    name: private-server-proxy-network
+    external: true

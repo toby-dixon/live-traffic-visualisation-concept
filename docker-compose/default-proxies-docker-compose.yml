@@ -1,0 +1,42 @@
+services:
+  public-server-proxy:
+    image: traefik:3.4
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    container_name: public-server-proxy
+    networks:
+      - public-server-proxy-network
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - ../proxies/public-server-proxy:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../access-logs/access-log.log:/var/log/traefik-access.log
+
+  private-server-proxy:
+    image: traefik:3.4
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    container_name: private-server-proxy
+    networks:
+      - private-server-proxy-network
+    ports:
+      - "8081:8080"
+    volumes:
+      - ../proxies/private-server-proxy:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../access-logs/access-log.log:/var/log/traefik-access.log
+
+networks:
+  public-server-proxy-network:
+    name: public-server-proxy-network
+    external: true
+
+  private-server-proxy-network:
+    name: private-server-proxy-network
+    external: true
+
+  new-public-server-proxy-network:
+    name: new-public-server-proxy-network
+    external: true

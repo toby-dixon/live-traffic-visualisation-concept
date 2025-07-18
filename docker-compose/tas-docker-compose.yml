@@ -1,0 +1,28 @@
+services:
+  traffic-aggregation-server:
+    container_name: traffic-aggregation-server
+    entrypoint: ["uvicorn", "--host", "0.0.0.0", "--reload", "public.index:app", "--port", "80"]
+    image: traffic-aggregation-server:latest
+    networks:
+      - public-server-proxy-network
+      - private-server-proxy-network
+      - new-public-server-proxy-network
+    ports:
+      - "82:80"
+    volumes:
+      - ../services/traffic-aggregation-server:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../access-logs/access-log.log:/var/log/access-log.log
+
+networks:
+  public-server-proxy-network:
+    name: public-server-proxy-network
+    external: true
+
+  private-server-proxy-network:
+    name: private-server-proxy-network
+    external: true
+
+  new-public-server-proxy-network:
+    name: new-public-server-proxy-network
+    external: true
